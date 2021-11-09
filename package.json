@@ -42,7 +42,6 @@
   "type": "module",
   "dependencies": {
     "connectome": "file:~/.dmt/core/node/connectome",
-    "dmt": "file:~/.dmt/user/engine",
     "dmt-frontend-components": "file:~/.dmt/core/lib/dmt-frontend-components",
     "stores-x": "^0.0.872",
     "svelte-feather-icons": "^3.5.0"
