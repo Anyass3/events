@@ -6,18 +6,18 @@ import { ProgramStateStore, MirroringStore } from 'dmt/connectome-stores';
 import { saveState, loadState, makeApi } from './state';
 
 export default function initProtocol({ program }) {
-	const store = new ProgramStateStore({ dmtVersion, events: [] }, { saveState, loadState });
+	const dmtVersion = dmt.dmtVersion();
+	const store = new ProgramStateStore(undefined, { saveState, loadState });
 	const api = makeApi(store);
-	const onConnect = ({ channel }) => {
-		setTimeout(() => channel.signal('notify-success', 'channel connected'), 5000);
-		handleEvents({ channel, api });
-	};
-
 	const protocol = 'dmt';
 	const lane = 'events';
-	const channelList = program.registerProtocol({ protocol, lane, onConnect });
-
-	const dmtVersion = dmt.dmtVersion();
+	const channelList = program.registerProtocol({
+		protocol,
+		lane,
+		onConnect: ({ channel }) => {
+			onConnect({ channel, api, dmtVersion });
+		}
+	});
 
 	store.mirror(channelList);
 }
