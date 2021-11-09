@@ -15,31 +15,41 @@ const stateFilePath = path.join(dmt.dmtHerePath, 'events.json');
 // 💻 → 💾
 // we receive clone of the state here, we can mutate it before saving.. no need to clone
 function saveState({ state, lastSavedState } = {}) {
-	fs.writeFileSync(JSON.stringify(state, null, 2));
+	state = JSON.stringify(state, null, 2);
+	log.green(state);
+	try {
+		fs.writeFileSync(stateFilePath, state);
+	} catch (error) {
+		log.red('error', error.message);
+	}
 }
 
 // 💻 ← 💾
 function loadState() {
 	if (fs.existsSync(stateFilePath)) {
 		try {
-			return JSON.parse(fs.readFileSync(stateFilePath));
+			const state = JSON.parse(fs.readFileSync(stateFilePath, 'utf-8'));
+			if (state?.events) return { dmtVersion, events: [] };
+			return state;
 		} catch (e) {
 			log.red(
 				`⚠️  Discarding invalid persisted state for ${stateFilePath}, starting with a clean state.`
 			);
 			log.red(e);
+			return { dmtVersion, events: [] };
 		}
 	} else {
 		log.yellow(`${stateFilePath} was not present, starting with a clean state.`);
+		return { dmtVersion, events: [] };
 	}
 }
 
 const makeApi = (store) => ({
 	get: () => store.state(),
-	getEvent: (name) => {
+	getEvent(name) {
 		return this.get().events.find((ev) => ev.name === name);
 	},
-	updateEvent: (event) => {
+	updateEvent(event) {
 		const state = this.get();
 		state.events = state.events.map((ev) => {
 			if (event.name === ev.name) {
@@ -48,7 +58,7 @@ const makeApi = (store) => ({
 		});
 		store.update(state);
 	},
-	setEvent: (event) => {
+	setEvent(event) {
 		const ev = this.getEvent(event.name);
 		if (ev) {
 			this.updateEvent(event);
