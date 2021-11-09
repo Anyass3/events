@@ -13,7 +13,14 @@
 		{ name: 'set event', href: base_url + 'set-event' },
 		{ name: 'settings', href: base_url + 'settings' }
 	];
+	const setActive = () => {
+		active = tabs.find((t) => t.href === $page.path);
+	};
 	let active = tabs.find((t) => t.href === $page.path);
+	$: {
+		$page.path;
+		setActive();
+	}
 </script>
 
 <div class="view py-6 ">
