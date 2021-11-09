@@ -29,18 +29,18 @@ function loadState() {
 	if (fs.existsSync(stateFilePath)) {
 		try {
 			const state = JSON.parse(fs.readFileSync(stateFilePath, 'utf-8'));
-			if (state?.events) return { dmtVersion, events: [] };
+			if (!state?.events) return { events: [] };
 			return state;
 		} catch (e) {
 			log.red(
 				`⚠️  Discarding invalid persisted state for ${stateFilePath}, starting with a clean state.`
 			);
 			log.red(e);
-			return { dmtVersion, events: [] };
+			return { events: [] };
 		}
 	} else {
 		log.yellow(`${stateFilePath} was not present, starting with a clean state.`);
-		return { dmtVersion, events: [] };
+		return { events: [] };
 	}
 }
 
