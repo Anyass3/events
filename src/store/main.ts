@@ -7,6 +7,7 @@ const event = {
 export default {
 	noStore: ['base_url'],
 	state: {
+		events: [],
 		event,
 		base_url: import.meta.env.BASE_URL.replace('_app/', '')
 	},

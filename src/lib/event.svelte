@@ -22,8 +22,10 @@
 		}
 	};
 	let update = !!$event.name;
-	let eventTime = getLocalDateTime($event.startsAtISO);
+	let eventTime;
+	eventTime = getLocalDateTime($event.startsAtISO);
 	$: setTime(eventTime);
+	const connector = store.g('connector');
 </script>
 
 <div class="flex flex-col">
@@ -31,7 +33,7 @@
 	<TextField bind:value={eventTime} label="Event Time" type="datetime-local" />
 	<TextField bind:value={$event.lang} label="Locale" />
 	<TextField bind:value={$event.meetupUrl} label="Event Link" type="url" />
-	<Button on:click={() => store.g('connector').signal('set-event', $event)}
+	<Button on:click={() => connector.signal('set-event', $event)}
 		>{(update ? 'Update' : 'New') + ' Event'}</Button
 	>
 </div>

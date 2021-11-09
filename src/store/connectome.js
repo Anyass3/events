@@ -24,6 +24,10 @@ export default {
 			commit('serverStore', store);
 			commit('connector', store.connector);
 			commit('connected', store.connected);
+			store.subscribe((state) => {
+				commit('events', state.events);
+				console.log(state);
+			});
 			// commit('serverApi', store.remoteObject?.bind?.(store)?.('dmt:events'));
 			store.connector.on('notify-success', (name) => {
 				console.log('notify-success', name);
