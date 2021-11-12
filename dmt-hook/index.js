@@ -9,11 +9,10 @@ export default function initProtocol({ program }) {
 	const dmtVersion = dmt.dmtVersion();
 	const store = new ProgramStateStore(undefined, { saveState, loadState });
 	const api = makeApi(store);
-	const protocol = 'dmt';
-	const lane = 'events';
+	const protocol = 'anyass3/events';
+
 	const channelList = program.registerProtocol({
 		protocol,
-		lane,
 		onConnect: ({ channel }) => {
 			onConnect({ channel, api, dmtVersion });
 		}
