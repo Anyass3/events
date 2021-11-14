@@ -1,5 +1,5 @@
 import { browser } from '$app/env'; // @ts-ignore
-import { connectBrowser } from 'connectome';
+import { connect } from 'connectome';
 // import { port } from './getAPi';
 
 export default {
@@ -12,18 +12,25 @@ export default {
 	},
 	actions: {
 		startConnectome: ({ commit, state, dispatch }) => {
-			if (!browser) return;
-			const address = window.location.hostname;
+			if (!browser && state.connector) return;
 
-			const protocol = 'dmt';
+			const protocol = 'anyass3/events';
 
-			const lane = 'events';
+			const connector = connect({ protocol, port: 7780 });
+			//   const { state: store, connected } = connector;
 
-			const connector = connectBrowser({ protocol, port: 7780, lane });
-			commit('connector', connector);
+			// console.log('store', store);
+			// commit('serverStore', store);
 			connector.on('ready', () => {
 				connector.signal('get events');
 			});
+			commit('connector', connector);
+			commit('connected', connector.connected);
+			// store.subscribe((state) => {
+			// 	commit('events', state.events);
+			// 	console.log(state);
+			// });
+
 			connector.on('events', (events) => {
 				console.log(events);
 				commit('events', events);
