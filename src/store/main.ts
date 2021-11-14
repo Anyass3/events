@@ -1,5 +1,6 @@
 const event = {
-	name: '',
+	title: '',
+	expectedDuration: 60,
 	startsAtISO: undefined,
 	meetupUrl: '',
 	lang: 'en'
@@ -14,6 +15,9 @@ export default {
 	actions: {
 		resetEvent({ commit }) {
 			commit('event', event);
+		},
+		setEvent({ dispatch, state }) {
+			state.connector.signal('set-event', state.event.get());
 		}
 	}
 };

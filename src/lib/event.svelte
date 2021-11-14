@@ -3,7 +3,7 @@
 	import TextField from '@smui/textfield/Textfield.svelte';
 	import Button from '@smui/button/Button.svelte';
 	const event = store.g('event');
-	$: console.log('event', $event);
+	// $: console.log('event', $event);
 	const getLocalDateTime = (val) => {
 		const dt = new Date(val || Date.now());
 		const time = dt.toLocaleString(undefined, {
@@ -29,11 +29,12 @@
 </script>
 
 <div class="flex flex-col">
-	<TextField bind:value={$event.name} label="Name" />
+	<TextField bind:value={$event.title} label="Title" />
 	<TextField bind:value={eventTime} label="Event Time" type="datetime-local" />
 	<TextField bind:value={$event.lang} label="Locale" />
+	<TextField bind:value={$event.expectedDuration} label="Expected Duration (mins)" />
 	<TextField bind:value={$event.meetupUrl} label="Event Link" type="url" />
-	<Button on:click={() => connector.signal('set-event', $event)}
+	<Button on:click={() => store.dispatch('setEvent')}
 		>{(update ? 'Update' : 'New') + ' Event'}</Button
 	>
 </div>
