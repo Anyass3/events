@@ -1,7 +1,7 @@
 import dmt from 'dmt/common';
 import { push } from 'dmt/notify';
 import onConnect from './onConnect';
-import { ProgramStateStore, MirroringStore } from 'dmt/connectome-stores';
+import { ProgramStateStore } from 'dmt/connectome-stores';
 
 import { saveState, loadState, makeApi } from './state';
 
@@ -11,15 +11,13 @@ export default function initProtocol({ program }) {
 	const api = makeApi(store);
 	const protocol = 'dmt';
 	const lane = 'events';
-	const channelList = program.registerProtocol({
+	program.registerProtocol({
 		protocol,
 		lane,
 		onConnect: ({ channel }) => {
 			onConnect({ channel, api, dmtVersion });
 		}
 	});
-
-	store.mirror(channelList);
 }
 
 function init(program) {

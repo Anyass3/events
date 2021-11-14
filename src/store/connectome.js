@@ -1,5 +1,5 @@
 import { browser } from '$app/env'; // @ts-ignore
-import { ConnectedStore } from 'connectome/stores';
+import { connectBrowser } from 'connectome';
 // import { port } from './getAPi';
 
 export default {
@@ -11,7 +11,7 @@ export default {
 		connected: null
 	},
 	actions: {
-		startConnectome: ({ commit }) => {
+		startConnectome: ({ commit, state, dispatch }) => {
 			if (!browser) return;
 			const address = window.location.hostname;
 
@@ -19,17 +19,16 @@ export default {
 
 			const lane = 'events';
 
-			const store = new ConnectedStore({ protocol, port: 7780, lane });
-			// console.log('store', store);
-			commit('serverStore', store);
-			commit('connector', store.connector);
-			commit('connected', store.connected);
-			store.subscribe((state) => {
-				commit('events', state.events);
-				console.log(state);
+			const connector = connectBrowser({ protocol, port: 7780, lane });
+			commit('connector', connector);
+			connector.on('ready', () => {
+				connector.signal('get events');
 			});
-			// commit('serverApi', store.remoteObject?.bind?.(store)?.('dmt:events'));
-			store.connector.on('notify-success', (name) => {
+			connector.on('events', (events) => {
+				console.log(events);
+				commit('events', events);
+			});
+			connector.on('notify-success', (name) => {
 				console.log('notify-success', name);
 			});
 		}
