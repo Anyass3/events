@@ -16,7 +16,6 @@ const stateFilePath = path.join(dmt.dmtHerePath, 'events.json');
 // we receive clone of the state here, we can mutate it before saving.. no need to clone
 function saveState({ state, lastSavedState } = {}) {
 	state = JSON.stringify(state, null, 2);
-	log.green(state);
 	try {
 		fs.writeFileSync(stateFilePath, state);
 	} catch (error) {
@@ -44,30 +43,53 @@ function loadState() {
 	}
 }
 
-const makeApi = (store) => ({
-	get: () => store.state(),
-	getEvent(name) {
-		return this.get().events.find((ev) => ev.name === name);
-	},
-	updateEvent(event) {
-		const state = this.get();
-		state.events = state.events.map((ev) => {
-			if (event.name === ev.name) {
-				return event;
-			} else return ev;
-		});
-		store.update(state);
-	},
-	setEvent(event) {
-		const ev = this.getEvent(event.name);
-		if (ev) {
-			this.updateEvent(event);
-		} else {
+const makeApi = (store) => {
+	const timeoutIds = new Map();
+	const dmtVersion = dmt.dmtVersion();
+	return {
+		timeoutIds,
+		get: () => store.state(),
+		getEvent(meetupTitle) {
+			return this.get().events.find((ev) => ev.meetupTitle === meetupTitle);
+		},
+		updateEvent(event) {
 			const state = this.get();
-			state.events.push(event);
+			state.events = state.events.map((ev) => {
+				if (event.meetupTitle === ev.meetupTitle) {
+					return event;
+				} else return ev;
+			});
 			store.update(state);
+		},
+		setEvent(event) {
+			const ev = this.getEvent(event.meetupTitle);
+			if (ev) {
+				this.updateEvent(event);
+			} else {
+				const state = this.get();
+				state.events.push(event);
+				store.update(state);
+			}
+		},
+		syncMeetup(channel, event, now = false) {
+			if (now) channel.signal('dmt-meetup', { dmtVersion, meetup: dmt.meetup(event) });
+			const self = this;
+			let timeoutId = self.timeoutIds.get(event.meetupTitle);
+			const mins = (new Date() - new Date(event.startsAtISO)) / 60000;
+			let timeout = 60 * 60 * 1000;
+			if (mins < 1) timeout = 500;
+			if (mins < 60) timeout = 60 * 1000;
+			if (mins === 0) timeout = undefined;
+			if (timeoutId) clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => {
+				channel.signal('dmt-meetup', { dmtVersion, meetup: dmt.meetup(event) });
+				if (timeout) {
+					self.syncMeetup(channel, event);
+				}
+			}, timeout);
+			self.timeoutIds.set(event.meetupTitle, timeoutId);
 		}
-	}
-});
+	};
+};
 
 export { saveState, loadState, makeApi };

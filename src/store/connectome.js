@@ -28,8 +28,18 @@ export default {
 				console.log(events);
 				commit('events', events);
 			});
+			connector.on('dmt-meetup', ({ dmtVersion, meetup }) => {
+				const events = state.events
+					.get()
+					.map((e) => (e.meetup.meetupTitle === meetup.meetupTitle ? { dmtVersion, meetup } : e));
+				commit('events', events);
+				console.log('dmt-meetup', events);
+			});
 			connector.on('notify-success', (name) => {
 				console.log('notify-success', name);
+			});
+			connector.on('set-event successful', () => {
+				dispatch('resetEvent');
 			});
 		}
 	}

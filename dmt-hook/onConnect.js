@@ -3,22 +3,31 @@ import { push } from 'dmt/notify';
 const { parseISO, formatISO, subHours, addHours, subMinutes, addMinutes } = dmt.dateFns;
 
 function handleEvents({ channel, api, dmtVersion }) {
-	channel.on('set-event', ({ startsAtISO, meetupUrl, lang = 'en', name }) => {
-		push.notify('an event set');
-		const state = {
-			dmtVersion,
-			meetup: dmt.meetup({
-				startsAtISO: formatISO(new Date(startsAtISO)),
-				meetupUrl,
-				meetupTitle: name
-			})
+	channel.on('set-event', ({ startsAtISO, meetupUrl, lang = 'en', expectedDuration, title }) => {
+		startsAtISO = formatISO(new Date(startsAtISO));
+		const event = {
+			startsAtISO,
+			meetupUrl,
+			lang,
+			expectedDurationMin: expectedDuration,
+			meetupTitle: title
 		};
-		channel.signal('notify-success', { startsAtISO, meetupUrl, lang, name, state });
-		api.setEvent({
-			name,
-			state
-		});
+		api.setEvent(event);
+		channel.signal('set-event succesful');
+		api.syncMeetup(channel, event, true);
+		push.notify('EVENT Updated: ' + title);
 	});
+	channel.on('get events', () => {
+		let events = api.get().events.map((ev) => {
+			ev['time'] = new Date(ev.startsAtISO).getTime();
+			return ev;
+		});
+		events.sort((a, b) => a.time - b.time);
+		events = events.map((event) => ({ dmtVersion, meetup: dmt.meetup(event) }));
+		channel.signal('events', events);
+	});
+
+	api.get().events.forEach((event) => api.syncMeetup(channel, event));
 	channel.on('disconnect', () => {
 		push.notify('events disconnected');
 	});
