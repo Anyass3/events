@@ -51,7 +51,7 @@
 </div>
 
 <style>
-	.connected {
+	/* .connected {
 		color: var(--dmt-cyan);
 	}
 	.disconnected {
@@ -59,5 +59,11 @@
 	}
 	.active {
 		color: var(--zeta-green);
+	} */
+	div {
+		background: rgba(29, 28, 45, 1);
+		position: sticky;
+		top: 0;
+		z-index: 100;
 	}
 </style>

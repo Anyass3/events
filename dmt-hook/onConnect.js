@@ -17,12 +17,8 @@ function handleEvents({ channel, api, dmtVersion }) {
 		api.syncMeetup(channel, event, true);
 		push.notify('EVENT Updated: ' + title);
 	});
+
 	channel.on('get events', () => {
-		let events = api.get().events.map((ev) => {
-			ev['time'] = new Date(ev.startsAtISO).getTime();
-			return ev;
-		});
-		events.sort((a, b) => a.time - b.time);
 		events = events.map((event) => ({ dmtVersion, meetup: dmt.meetup(event) }));
 		channel.signal('events', events);
 	});

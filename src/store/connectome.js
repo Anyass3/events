@@ -33,14 +33,14 @@ export default {
 
 			connector.on('events', (events) => {
 				console.log(events);
-				commit('events', events);
+				dispatch('events', events);
 			});
 			connector.on('dmt-meetup', ({ dmtVersion, meetup }) => {
 				const events = state.events
 					.get()
 					.map((e) => (e.meetup.meetupTitle === meetup.meetupTitle ? { dmtVersion, meetup } : e));
-				commit('events', events);
-				console.log('dmt-meetup', events);
+				dispatch('events', events);
+				console.log('dmt-meetup', { dmtVersion, meetup }, events);
 			});
 			connector.on('notify-success', (name) => {
 				console.log('notify-success', name);

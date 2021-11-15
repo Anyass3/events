@@ -16,6 +16,10 @@ export default {
 		resetEvent({ commit }) {
 			commit('event', event);
 		},
+		events({ commit }, events) {
+			events.sort((a, b) => a.meetup.startsAtUnixTimestamp - b.meetup.startsAtUnixTimestamp);
+			commit('events', events);
+		},
 		setEvent({ dispatch, state }) {
 			state.connector.signal('set-event', state.event.get());
 		}

@@ -25,7 +25,6 @@
 	let eventTime;
 	eventTime = getLocalDateTime($event.startsAtISO);
 	$: setTime(eventTime);
-	const connector = store.g('connector');
 </script>
 
 <div class="flex flex-col">
@@ -35,6 +34,6 @@
 	<TextField bind:value={$event.expectedDuration} label="Expected Duration (mins)" />
 	<TextField bind:value={$event.meetupUrl} label="Event Link" type="url" />
 	<Button on:click={() => store.dispatch('setEvent')}
-		>{(update ? 'Update' : 'New') + ' Event'}</Button
+		>{(update ? 'Update' : 'set') + ' Event'}</Button
 	>
 </div>
