@@ -4,6 +4,7 @@ import path from 'path';
 import dmt from 'dmt/common';
 const { log } = dmt;
 
+const { parseISO, formatISO, subHours, addHours, subMinutes, addMinutes } = dmt.dateFns;
 const stateFilePath = path.join(dmt.dmtHerePath, 'events.json');
 // state:{
 //	 dmtVersion:number;
@@ -29,6 +30,10 @@ function loadState() {
 		try {
 			const state = JSON.parse(fs.readFileSync(stateFilePath, 'utf-8'));
 			if (!state?.events) return { events: [] };
+			const now = Date.now();
+			state.events = state.events.filter(
+				(ev) => new Date(addMinutes(ev.startsAtISO, ev.expectedDurationMin)).getTime() - now > 0
+			);
 			return state;
 		} catch (e) {
 			log.red(
@@ -71,20 +76,38 @@ const makeApi = (store) => {
 				store.update(state);
 			}
 		},
+		delEvent(meetupTitle) {
+			const state = this.get();
+			state.events.filter((ev) => ev.meetupTitle !== meetupTitle);
+			store.update(state);
+		},
 		syncMeetup(channel, event, now = false) {
 			if (now) channel.signal('dmt-meetup', { dmtVersion, meetup: dmt.meetup(event) });
 			const self = this;
+
 			let timeoutId = self.timeoutIds.get(event.meetupTitle);
-			const mins = (new Date() - new Date(event.startsAtISO)) / 60000;
+			const mins = (new Date(event.startsAtISO) - new Date()) / 60000;
 			let timeout = 60 * 60 * 1000;
-			if (mins < 1) timeout = 500;
-			if (mins < 60) timeout = 60 * 1000;
-			if (mins === 0) timeout = undefined;
+
+			if (-1 * mins >= event.expectedDurationMin || (event.expectedDurationMin === 0 && mins === 0))
+				timeout = undefined;
+			if (mins < 1) timeout = 1000;
+			else if (mins < 60) timeout = 60 * 1000;
+
+			log.red(JSON.stringify({ mins, timeout }));
+
 			if (timeoutId) clearTimeout(timeoutId);
 			timeoutId = setTimeout(() => {
-				channel.signal('dmt-meetup', { dmtVersion, meetup: dmt.meetup(event) });
+				channel.signal('dmt-meetup', { dmtVersion, meetup: dmt.meetup(event), timeout, mins });
 				if (timeout) {
 					self.syncMeetup(channel, event);
+				} else {
+					const state = this.get();
+					const now = Date.now();
+					state.events = state.events.filter(
+						(ev) => new Date(addMinutes(ev.startsAtISO, ev.expectedDurationMin)).getTime() - now > 0
+					);
+					store.update(state);
 				}
 			}, timeout);
 			self.timeoutIds.set(event.meetupTitle, timeoutId);

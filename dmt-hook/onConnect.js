@@ -10,16 +10,17 @@ function handleEvents({ channel, api, dmtVersion }) {
 			meetupUrl,
 			lang,
 			expectedDurationMin: expectedDuration,
+			stillAllowJoinAfterExpectedEndMin: expectedDuration,
 			meetupTitle: title
 		};
 		api.setEvent(event);
-		channel.signal('set-event succesful');
+		channel.signal('set-event successful');
 		api.syncMeetup(channel, event, true);
 		push.notify('EVENT Updated: ' + title);
 	});
 
 	channel.on('get events', () => {
-		events = events.map((event) => ({ dmtVersion, meetup: dmt.meetup(event) }));
+		const events = api.get().events.map((event) => ({ dmtVersion, meetup: dmt.meetup(event) }));
 		channel.signal('events', events);
 	});
 

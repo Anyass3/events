@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@smui/button": "^5.0.0-beta.8",
+    "@smui/dialog": "^5.0.0",
     "@smui/tab": "^5.0.0-beta.8",
     "@smui/tab-bar": "^5.0.0-beta.8",
     "@smui/textfield": "^5.0.0-beta.8",
@@ -23,6 +24,7 @@
     "@typescript-eslint/parser": "^4.31.1",
     "autoprefixer": "^10.4.0",
     "cssnano": "^5.0.9",
+    "dmt-frontend-components": "file:~/.dmt/core/lib/dmt-frontend-components",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-svelte3": "^3.2.1",
@@ -34,12 +36,11 @@
     "smui-theme": "^5.0.0-beta.8",
     "svelte": "^3.42.6",
     "svelte-check": "^2.2.6",
+    "svelte-feather-icons": "^3.5.0",
     "svelte-preprocess": "^4.9.4",
     "tailwindcss": "^2.2.19",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3",
-    "dmt-frontend-components": "file:~/.dmt/core/lib/dmt-frontend-components",
-    "svelte-feather-icons": "^3.5.0"
+    "typescript": "^4.4.3"
   },
   "type": "module",
   "dependencies": {

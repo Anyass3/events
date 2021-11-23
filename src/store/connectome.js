@@ -35,17 +35,22 @@ export default {
 				console.log(events);
 				dispatch('events', events);
 			});
-			connector.on('dmt-meetup', ({ dmtVersion, meetup }) => {
+			connector.on('dmt-meetup', ({ dmtVersion, meetup, timeout, mins }) => {
+				// dispatch('snackbar', 'set-event successful');
+
+				console.log('openSnackbar', meetup.meetupTitle, timeout, mins);
 				const events = state.events
 					.get()
-					.map((e) => (e.meetup.meetupTitle === meetup.meetupTitle ? { dmtVersion, meetup } : e));
+					.filter((e) => e.meetup.meetupTitle !== meetup.meetupTitle)
+					.concat([{ dmtVersion, meetup }]);
 				dispatch('events', events);
-				console.log('dmt-meetup', { dmtVersion, meetup }, events);
+				// console.log('dmt-meetup', { dmtVersion, meetup }, events);
 			});
-			connector.on('notify-success', (name) => {
-				console.log('notify-success', name);
+			connector.on('notify-success', (msg) => {
+				dispatch('snackbar', msg);
 			});
 			connector.on('set-event successful', () => {
+				dispatch('snackbar', 'set-event successful');
 				dispatch('resetEvent');
 			});
 		}
