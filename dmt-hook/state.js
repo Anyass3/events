@@ -94,11 +94,9 @@ const makeApi = (store) => {
 			if (mins < 1) timeout = 1000;
 			else if (mins < 60) timeout = 60 * 1000;
 
-			log.red(JSON.stringify({ mins, timeout }));
-
 			if (timeoutId) clearTimeout(timeoutId);
 			timeoutId = setTimeout(() => {
-				channel.signal('dmt-meetup', { dmtVersion, meetup: dmt.meetup(event), timeout, mins });
+				channel.signal('dmt-meetup', { dmtVersion, meetup: dmt.meetup(event) });
 				if (timeout) {
 					self.syncMeetup(channel, event);
 				} else {
