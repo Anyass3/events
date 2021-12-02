@@ -1,5 +1,6 @@
-import { browser } from '$app/env'; // @ts-ignore
+import { browser } from '$app/env';
 import { connect } from 'connectome';
+import type { Connectome } from 'connectome/typings';
 // import { port } from './getAPi';
 
 export default {
@@ -15,7 +16,6 @@ export default {
 			if (!browser && state.connector) return;
 
 			const protocol = 'anyass3/events';
-
 			const connector = connect({ protocol, port: 7780 });
 			//   const { state: store, connected } = connector;
 

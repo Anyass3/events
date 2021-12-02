@@ -44,7 +44,7 @@
   },
   "type": "module",
   "dependencies": {
-    "connectome": "file:~/.dmt/core/node/connectome",
+    "connectome": "file:../../connectome",
     "stores-x": "^0.0.872"
   }
 }
