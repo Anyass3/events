@@ -1,5 +1,4 @@
 import dmt from 'dmt/common';
-import { push } from 'dmt/notify';
 import onConnect from './onConnect';
 import { SlottedStore } from 'dmt/connectome-stores';
 

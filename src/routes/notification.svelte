@@ -14,22 +14,23 @@
 	let app = { id: '', token: '' };
 </script>
 
-<label for="select-pushover" class="capitalize text-3xl">Select pushover notification account</label
->
+<div class="flex flex-col gap-3">
+	<h3 class="capitalize text-3xl mb-2">Select pushover account</h3>
 
-<Select
-	id="select-pushover"
-	bind:selected
-	items={$pushover.app}
-	on:change={() => {
-		console.log(selected);
-		if (selected.id && selected.token.match(/[a-z0-9]{30}/)) {
-			connector.signal('set-event-pushover-app', selected);
-		} else snackbar.show('Please cross-check selected');
-	}}
-/>
+	<Select
+		id="select-pushover"
+		bind:selected
+		items={$pushover.app}
+		on:change={() => {
+			console.log(selected);
+			if (selected.id && selected.token.match(/[a-z0-9]{30}/)) {
+				connector.signal('set-event-pushover-app', selected);
+			} else snackbar.show('Please cross-check selected');
+		}}
+	/>
+</div>
 
-<div class="pt-16 flex flex-col gap-3">
+<div class="mt-16 flex flex-col gap-3">
 	<h3 class="capitalize text-3xl">or add pushover app</h3>
 	<TextField bind:value={app.id} label="Name" />
 	<TextField bind:value={app.token} label="API Token/Key" />

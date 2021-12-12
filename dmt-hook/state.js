@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { push } from 'dmt/notify';
 
 import { def2json, json2def } from 'dmt-defjson';
 
@@ -58,6 +59,12 @@ const makeApi = (store) => {
 	const dmtVersion = dmt.dmtVersion();
 	return {
 		timeoutIds,
+		notify(msg) {
+			const pushoverAppId = this.getEventPushoverApp()?.id;
+			if (pushoverAppId) {
+				push.app(pushoverAppId).notify(msg);
+			} else push.notify(msg);
+		},
 		get: () => store.state(),
 		getEvent(meetupTitle) {
 			return this.get().events.find((ev) => ev.meetupTitle === meetupTitle);
@@ -65,16 +72,16 @@ const makeApi = (store) => {
 		getPushOverApps() {
 			const { pushover } = def2json(fs.readFileSync(pushoverDefPath, 'utf-8'));
 			if (!Array.isArray(pushover.app)) pushover.app = [pushover.app];
-			log.red(JSON.stringify(pushover, undefined, 2));
+			// log.red(JSON.stringify(pushover, undefined, 2));
 			return pushover;
 		},
 		setPushoverApp(app, update = true) {
-			log.red(JSON.stringify(app));
+			// log.red(JSON.stringify(app));
 			const pushover = this.getPushOverApps();
 			if (pushover.app.find(({ id }) => app.id !== id)) {
 				pushover.app.push(app);
 				const def = json2def({ pushover });
-				log.green(def);
+				// log.green(def);
 				fs.writeFileSync(pushoverDefPath, def);
 			} else if (update) {
 				pushover.app.map((a) => {

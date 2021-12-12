@@ -1,5 +1,4 @@
 import dmt from 'dmt/common';
-import { push } from 'dmt/notify';
 const { parseISO, formatISO, subHours, addHours, subMinutes, addMinutes } = dmt.dateFns;
 
 function handleEvents({ channel, api, dmtVersion }) {
@@ -18,7 +17,7 @@ function handleEvents({ channel, api, dmtVersion }) {
 		api.setEvent(event);
 		channel.signal('set-event successful');
 		api.syncMeetup(channel, event, true);
-		push.notify('EVENT Updated: ' + title);
+		api.notify('EVENT Updated: ' + title);
 	});
 
 	channel.on('set-pushover-app', ({ app, update = false }) => {
@@ -31,6 +30,7 @@ function handleEvents({ channel, api, dmtVersion }) {
 		api.setEventPushoverApp(app);
 		channel.signal('notify-success', app.id + ' is current pushover app');
 		channel.signal('event-pushover-app', api.getEventPushoverApp());
+		api.notify('This is current pushover app for events app');
 	});
 
 	channel.on('get events', () => {
@@ -40,7 +40,7 @@ function handleEvents({ channel, api, dmtVersion }) {
 
 	api.get().events.forEach((event) => api.syncMeetup(channel, event));
 	channel.on('disconnect', () => {
-		push.notify('events disconnected');
+		// api.notify('events disconnected');
 	});
 }
 
