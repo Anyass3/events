@@ -1,6 +1,5 @@
 import { browser } from '$app/env';
 import { connect } from 'connectome';
-import type { Connectome } from 'connectome/typings';
 // import { port } from './getAPi';
 
 export default {
@@ -46,11 +45,17 @@ export default {
 				dispatch('events', events);
 				// console.log('dmt-meetup', { dmtVersion, meetup }, events);
 			});
+			connector.on('pushover', (pushover) => {
+				dispatch('pushover', pushover);
+			});
+			connector.on('event-pushover-app', (pushoverApp) => {
+				dispatch('pushoverApp', pushoverApp);
+			});
 			connector.on('notify-success', (msg) => {
 				dispatch('snackbar', msg);
 			});
 			connector.on('set-event successful', () => {
-				dispatch('snackbar', 'set-event successful');
+				dispatch('snackbar', 'Set Event Successful');
 				dispatch('resetEvent');
 			});
 		}

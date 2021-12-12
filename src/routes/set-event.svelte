@@ -4,6 +4,4 @@
 	const connected = store.g('connected');
 </script>
 
-<div class="view">
-	<SetEvent />
-</div>
+<SetEvent />

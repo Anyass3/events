@@ -10,5 +10,7 @@
 </script>
 
 <Nav />
-<slot />
+<div class="view py-4">
+	<slot />
+</div>
 <Snackbar />

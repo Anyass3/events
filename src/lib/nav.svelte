@@ -2,7 +2,6 @@
 	import Label from '@smui/common/CommonLabel.svelte';
 	import Tab from '@smui/tab/Tab.svelte';
 	import TabBar from '@smui/tab-bar/TabBar.svelte';
-	import Button from '@smui/button/Button.svelte';
 	import store from '$store';
 	const connected = store.g('connected');
 	import { page } from '$app/stores';
@@ -11,7 +10,7 @@
 	const tabs = [
 		{ name: 'events', href: base_url },
 		{ name: 'set event', href: base_url + 'set-event' },
-		{ name: 'settings', href: base_url + 'settings' }
+		{ name: 'notification', href: base_url + 'notification' }
 	];
 	const setActive = () => {
 		active = tabs.find((t) => t.href === $page.path);

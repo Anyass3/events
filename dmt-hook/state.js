@@ -1,7 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 
+import { def2json, json2def } from 'dmt-defjson';
+
 import dmt from 'dmt/common';
+
+const pushoverDefPath = path.join(dmt.userDir, 'def/pushover.def');
+
 const { log } = dmt;
 
 const { parseISO, formatISO, subHours, addHours, subMinutes, addMinutes } = dmt.dateFns;
@@ -56,6 +61,38 @@ const makeApi = (store) => {
 		get: () => store.state(),
 		getEvent(meetupTitle) {
 			return this.get().events.find((ev) => ev.meetupTitle === meetupTitle);
+		},
+		getPushOverApps() {
+			const { pushover } = def2json(fs.readFileSync(pushoverDefPath, 'utf-8'));
+			if (!Array.isArray(pushover.app)) pushover.app = [pushover.app];
+			log.red(JSON.stringify(pushover, undefined, 2));
+			return pushover;
+		},
+		setPushoverApp(app, update = true) {
+			log.red(JSON.stringify(app));
+			const pushover = this.getPushOverApps();
+			if (pushover.app.find(({ id }) => app.id !== id)) {
+				pushover.app.push(app);
+				const def = json2def({ pushover });
+				log.green(def);
+				fs.writeFileSync(pushoverDefPath, def);
+			} else if (update) {
+				pushover.app.map((a) => {
+					if (a.id === app._id) {
+						a.id = app.id;
+						a.token = app.token;
+					}
+					return a;
+				});
+			}
+		},
+		setEventPushoverApp(app) {
+			const state = this.get();
+			state['pushover'] = app;
+			store.update(state);
+		},
+		getEventPushoverApp() {
+			return this.get().pushover;
 		},
 		updateEvent(event) {
 			const state = this.get();

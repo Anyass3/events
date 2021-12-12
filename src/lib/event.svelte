@@ -14,7 +14,9 @@
 	<TextField bind:value={$event.lang} label="Locale" />
 	<TextField bind:value={$event.expectedDuration} label="Expected Duration (mins)" />
 	<TextField bind:value={$event.meetupUrl} label="Event Link" type="url" />
-	<Button on:click={() => store.dispatch('setEvent')}
-		>{(update ? 'Update' : 'Set') + ' Event'}</Button
-	>
+	<div>
+		<Button on:click={() => store.dispatch('setEvent')}
+			>{(update ? 'Update' : 'Set') + ' Event'}</Button
+		>
+	</div>
 </div>

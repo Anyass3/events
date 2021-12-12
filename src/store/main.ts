@@ -5,7 +5,9 @@ export default {
 		events: [],
 		event: getEvent(),
 		base_url: import.meta.env.BASE_URL.replace('_app/', ''),
-		snackbar: createSnackStore()
+		snackbar: createSnackStore(),
+		pushover: { app: [] },
+		pushoverApp: undefined
 	},
 	mutations: {
 		event(state, event) {

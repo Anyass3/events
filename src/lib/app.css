@@ -52,6 +52,9 @@ body {
 	color: var(--dmt-cool-cyan);
 	min-height: 100vh;
 }
+.icon {
+	@apply grid place-items-center;
+}
 
 .view {
 	width: 100%;
